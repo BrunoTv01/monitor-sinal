@@ -1,0 +1,15 @@
+services:
+  monitor-sinal:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dados:/app/dados
+      - ./web/dados:/app/web/dados
+    environment:
+      MONITOR_PORTA: "8080"
+      # MONITOR_USUARIO: admin
+      # MONITOR_SENHA: troque-esta-senha
+    restart: unless-stopped
+# Reprocessar depois de copiar novos CSV para dados/entrada/2026:
+#   docker compose run --rm monitor-sinal python3 processar.py

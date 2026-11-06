@@ -1,0 +1,1 @@
+Coloque aqui os CSV das medições novas (Dia01.csv, Dia02.csv, ...) e rode ./atualizar.sh

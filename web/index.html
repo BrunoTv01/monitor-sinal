@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitor de Sinal TV Digital – São Paulo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%232a78d6%27/%3E%3Cpath d=%27M6 22 L12 14 L17 18 L26 8%27 stroke=%27white%27 stroke-width=%273%27 fill=%27none%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sx">
+  <header class="sx-top">
+    <div class="sx-brand"><span class="sx-logo"></span><div><div class="t">Monitor de Sinal TV Digital</div><div class="s" id="subtitulo">São Paulo</div></div></div>
+    <nav class="sx-nav" aria-label="Seções">
+      <a href="#painel" data-tab="painel">Painel</a>
+      <a href="#mapa" data-tab="mapa">Mapa</a>
+      <a href="#regioes" data-tab="regioes">Regiões</a>
+      <a href="#ocorrencias" data-tab="ocorrencias">Ocorrências de piora</a>
+      <a href="#sobre" data-tab="sobre">Metodologia</a>
+    </nav>
+  </header>
+
+  <div class="sx-erro" id="erro" hidden></div>
+
+  <!-- PAINEL -->
+  <section class="sx-page" id="painel">
+    <p id="resumo-texto">Carregando…</p>
+    <div class="sx-tiles">
+      <div class="sx-tile"><span class="lbl">Regiões que melhoraram</span><span class="big up" id="k-melh">—</span><span class="lbl" id="k-melh-s"></span></div>
+      <div class="sx-tile"><span class="lbl">Regiões estáveis</span><span class="big" id="k-est">—</span><span class="lbl" id="k-est-s"></span></div>
+      <div class="sx-tile"><span class="lbl">Regiões que pioraram</span><span class="big down" id="k-pior">—</span><span class="lbl" id="k-pior-s"></span></div>
+      <div class="sx-tile"><span class="lbl">Áreas (~550 m) que pioraram</span><span class="big down" id="k-areas">—</span><span class="lbl" id="k-areas-s"></span></div>
+      <div class="sx-tile"><span class="lbl">Medições comparadas</span><span class="big" id="k-med">—</span><span class="lbl" id="k-med-s"></span></div>
+    </div>
+    <div class="sx-grid">
+      <section class="sx-card">
+        <h2>Nível mediano por canal</h2>
+        <p class="note">Cinza: referência. Colorido: medição nova (azul melhorou, vermelho piorou). Mais à direita é sinal mais forte.</p>
+        <div class="sx-chart can" id="g-canais"></div>
+      </section>
+      <section class="sx-card">
+        <h2>Qualidade das medições</h2>
+        <div class="sx-legend"><span><i class="sw" style="background:#2a78d6"></i>Bom</span><span><i class="sw" style="background:#86b6ef"></i>Médio</span><span><i class="sw" style="background:#eda100"></i>Limítrofe</span><span><i class="sw" style="background:#e34948"></i>Sem sinal</span></div>
+        <div class="sx-chart cls" id="g-classes"></div>
+      </section>
+    </div>
+    <div class="sx-grid">
+      <section class="sx-card">
+        <h2>Maiores melhoras</h2>
+        <p class="note">Regiões de ~2 km. Clique para ver no mapa.</p>
+        <table><thead><tr><th>Região (aprox.)</th><th class="n">Variação</th><th class="n">Nível novo (dBm)</th></tr></thead><tbody id="t-melhor"></tbody></table>
+      </section>
+      <section class="sx-card">
+        <h2>Piores resultados</h2>
+        <p class="note">Regiões de ~2 km. Clique para ver no mapa.</p>
+        <table><thead><tr><th>Região (aprox.)</th><th class="n">Variação</th><th class="n">Nível novo (dBm)</th></tr></thead><tbody id="t-pior"></tbody></table>
+      </section>
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="sx-page" id="mapa" hidden>
+    <div class="sx-tools">
+      <label>Canal<select id="f-canal"><option value="Todos">Todos (média)</option></select></label>
+      <label>Situação<select id="f-sit"><option value="">Todas</option><option value="Melhorou">Só onde melhorou</option><option value="Estável">Só estável</option><option value="Piorou">Só onde piorou</option></select></label>
+      <label>Fundo<select id="f-fundo"><option value="osm">Mapa (OpenStreetMap)</option><option value="trilhas">Só trajetos (offline)</option></select></label>
+      <label>Ir para o bairro<input id="busca" list="bairros" placeholder="Digite um bairro"></label>
+      <datalist id="bairros"></datalist>
+      <div class="sx-zoom"><button id="z-in" title="Aproximar">+</button><button id="z-out" title="Afastar">−</button><button id="z-reset" title="Ver a cidade toda">⟲</button></div>
+    </div>
+    <div class="sx-mapgrid">
+      <div class="sx-card">
+        <div class="sx-legend"><span>Piorou</span><span class="ramp"></span><span>Melhorou</span><span id="leg-escala"></span><span>· arraste para mover, role para zoom</span></div>
+        <div class="sx-chart map" id="mapa-sp"></div>
+        <p class="note">Nomes de bairro aproximados. Sem internet, use o fundo "Só trajetos".</p>
+      </div>
+      <aside class="sx-card sx-panel">
+        <h2>Detalhes da área</h2>
+        <p class="note" id="det-vazio">Clique numa área colorida do mapa para ver o nível nas duas campanhas, a variação e o resultado de cada canal.</p>
+        <div id="det" hidden>
+          <h3 id="d-regiao"></h3>
+          <span class="hero" id="d-var"></span>
+          <dl>
+            <dt>Situação</dt><dd id="d-sit"></dd>
+            <dt>Canal</dt><dd id="d-canal"></dd>
+            <dt id="d-l-ref">Nível ref.</dt><dd id="d-ref"></dd>
+            <dt id="d-l-novo">Nível novo</dt><dd id="d-novo"></dd>
+            <dt>Faixa</dt><dd id="d-faixa"></dd>
+            <dt>Medições</dt><dd id="d-amostras"></dd>
+            <dt>Coordenadas</dt><dd id="d-coord"></dd>
+          </dl>
+          <h3>Cada canal nesta área</h3>
+          <table><thead><tr><th>Canal</th><th class="n">Variação</th><th class="n" id="d-th-ref">Ref.</th><th class="n" id="d-th-novo">Novo</th></tr></thead><tbody id="d-canais"></tbody></table>
+          <a id="d-link" target="_blank" rel="noopener">Abrir este ponto no Google Maps ↗</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- REGIÕES -->
+  <section class="sx-page" id="regioes" hidden>
+    <section class="sx-card">
+      <div class="sx-tools between">
+        <div><h2>Todas as regiões</h2><p class="note">Regiões de ~2 km, média dos canais. Clique no título para ordenar e numa linha para ver no mapa.</p></div>
+        <div class="sx-actions"><input id="q" type="search" placeholder="Buscar região"><button id="csv-reg">Baixar CSV</button></div>
+      </div>
+      <div class="sx-tablebox">
+        <table id="t-reg">
+          <thead><tr>
+            <th><button data-sort="regiao_unica">Região (aprox.)</button></th>
+            <th><button data-sort="situacao">Situação</button></th>
+            <th class="n"><button data-sort="variacao_db">Variação</button></th>
+            <th class="n"><button data-sort="nivel_ref" class="lbl-ref">Ref. (dBm)</button></th>
+            <th class="n"><button data-sort="nivel_novo" class="lbl-novo">Novo (dBm)</button></th>
+            <th class="hide-narrow">Faixa</th>
+            <th class="hide-narrow">Canais</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <!-- OCORRÊNCIAS -->
+  <section class="sx-page" id="ocorrencias" hidden>
+    <section class="sx-card">
+      <div class="sx-tools between">
+        <div><h2>Ocorrências de piora</h2><p class="note" id="oc-nota">Áreas de ~550 m onde o nível caiu, da maior queda para a menor. Clique numa linha para abrir no mapa.</p></div>
+        <div class="sx-actions"><label>Canal<select id="f-oc"><option value="">Todos</option><option value="Todos">Média dos canais</option></select></label><button id="csv-oc">Baixar CSV</button></div>
+      </div>
+      <div class="sx-tablebox">
+        <table id="t-oc">
+          <thead><tr><th>Região (aprox.)</th><th>Canal</th><th class="n">Variação</th><th class="n lbl-ref">Ref. (dBm)</th><th class="n lbl-novo">Novo (dBm)</th><th class="hide-narrow">Faixa</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <!-- METODOLOGIA -->
+  <section class="sx-page" id="sobre" hidden>
+    <section class="sx-card">
+      <h2>Como a comparação foi feita</h2>
+      <dl class="m" id="metodo"></dl>
+      <p class="note" id="gerado"></p>
+    </section>
+  </section>
+</div>
+<script src="vendor/d3.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

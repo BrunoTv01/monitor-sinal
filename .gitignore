@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+*.pyc
+dados/entrada/2026/*.csv
+dados/unificado*.csv
