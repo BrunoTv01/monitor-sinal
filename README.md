@@ -53,7 +53,30 @@ curl -fsSL https://raw.githubusercontent.com/BrunoTv01/monitor-sinal/main/instal
 curl -fsSL https://raw.githubusercontent.com/BrunoTv01/monitor-sinal/main/install.sh | sudo bash -s -- --desinstalar
 ```
 
+Sem `curl` (ex.: Debian mínimo), use `wget`:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/BrunoTv01/monitor-sinal/main/install.sh | sudo bash
+```
+
+Sem `sudo` (logado como usuário comum no Debian): entre como root com `su -` e rode o comando sem o `sudo`.
+
 Comandos úteis: `sudo systemctl status monitor-sinal`, `sudo journalctl -u monitor-sinal -f`.
+
+### Se a instalação não funcionar
+
+- O instalador grava tudo em `/var/log/monitor-sinal-install.log`. A última
+  linha vermelha (`!! ...`) diz onde parou.
+- **Fica parado em "Instalando dependências"**: numa VM recém-criada o sistema
+  costuma estar fazendo atualizações automáticas; o instalador espera até 10
+  minutos. Se preferir, aguarde e rode de novo.
+- **"Não consegui baixar"**: a VM não está acessando o GitHub (teste com
+  `curl -I https://github.com`).
+- **Instalou, mas não abre de outro computador**: libere a porta 8080 de
+  entrada no firewall da nuvem ou da VM (AWS Security Group, Azure NSG,
+  Oracle Security List, rede "NAT" do VirtualBox/VMware etc.). Na própria VM,
+  `curl http://localhost:8080/` deve responder.
+- **"porta já está em uso"**: rode com outra porta: `... | sudo PORTA=8090 bash`.
 
 O fundo **OpenStreetMap** do mapa é baixado pelo navegador de quem acessa; sem
 internet, escolha o fundo **Só trajetos**, que funciona offline.
